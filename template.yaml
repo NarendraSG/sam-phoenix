@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    CodeUri: ./apps/
+    Runtime: nodejs16.x
+    Architectures:
+      - arm64
+    Timeout: 30
+    MemorySize: 128
+    Environment:
+        Variables:
+          TABLE_NAME: !Ref UserTableName
+          STAGE: !Ref Stage
+          REGION: !Ref AWS::Region
+
+
+Parameters:
+  Stage:
+    Type: String
+    Default: local
+    Description: Developing while debugging on lambda function
+
+  UserTableName:
+    Type: String
+    Default: users
+    Description: User Table Name 
+
+Resources:
+  RestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Stage
+     
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.handler
+      Events:
+          Function1:
+            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+            Properties:
+              RestApiId: !Ref RestApi
+              Path: /hello
+              Method: get
+      
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: false
+        EntryPoints: 
+        - ./api/src/handler.ts
+
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserTable
+      Handler: get.handler
+      Events:
+          Function2:
+            Type: Api 
+            Properties:
+              RestApiId: !Ref RestApi
+              Path: /users
+              Method: get
+      
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: false
+        EntryPoints: 
+        - api/src/get.ts
+
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref UserTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  BaseURL:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"

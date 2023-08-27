@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "@nv-sam/lib",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "build": "rm -rf dist && tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  },
+  "description": ""
+}
