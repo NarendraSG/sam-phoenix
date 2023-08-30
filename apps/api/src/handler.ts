@@ -9,7 +9,7 @@ export async function handler(
     // return "hello world";
     return {
       statusCode: 200,
-      body: "Adding. " + adder(1, 6),
+      body: "Adding/....... " + adder(1, 6),
     };
   } catch (error) {
     return {

@@ -10,6 +10,19 @@ importers:
 
   apps/api:
     dependencies:
+      '@nv-sam/lib':
+        specifier: workspace:1.0.0
+        version: link:../../packages/lib
+      aws-lambda:
+        specifier: ^1.0.7
+        version: 1.0.7
+    devDependencies:
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
+
+  apps/crud:
+    dependencies:
       '@nv-sam/dynamodb':
         specifier: workspace:1.0.0
         version: link:../../packages/dynamodb

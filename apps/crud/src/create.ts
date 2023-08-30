@@ -7,21 +7,12 @@ export async function handler(event: any) {
       tableName: process.env.TABLE_NAME,
     });
 
-    const result = await client.get({
-      id: 1, //event.queryStringParameters.id,
-    });
+    await client.put(JSON.parse(event.body));
 
-    if (result) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify(result),
-      };
-    } else {
-      return {
-        statusCode: 404,
-        body: "Not Found.......",
-      };
-    }
+    return {
+      statusCode: 200,
+      body: "Success",
+    };
   } catch (error) {
     return {
       statusCode: 500,

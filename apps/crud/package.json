@@ -1,10 +1,10 @@
 {
-  "name": "@nv-apps/api",
+  "name": "crud",
   "version": "1.0.0",
   "description": "",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@nv-sam/dynamodb": "workspace:1.0.0",
     "@nv-sam/lib": "workspace:1.0.0",
     "aws-lambda": "^1.0.7"
   }

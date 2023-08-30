@@ -76,7 +76,80 @@ Resources:
         Target: "es2020"
         Sourcemap: false
         EntryPoints: 
-        - api/src/get.ts
+        - crud/src/get.ts
+
+  PostUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserTable
+      Handler: create.handler
+      Events:
+          Function2:
+            Type: Api 
+            Properties:
+              RestApiId: !Ref RestApi
+              Path: /users
+              Method: post
+      
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: false
+        EntryPoints: 
+        - crud/src/create.ts
+
+  UpdateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserTable
+      Handler: update.handler
+      Events:
+          Function2:
+            Type: Api 
+            Properties:
+              RestApiId: !Ref RestApi
+              Path: /users
+              Method: put
+      
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: false
+        EntryPoints: 
+        - crud/src/update.ts
+
+  DeleteUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserTable
+      Handler: delete.handler
+      Events:
+          Function2:
+            Type: Api 
+            Properties:
+              RestApiId: !Ref RestApi
+              Path: /users
+              Method: delete
+      
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: false
+        EntryPoints: 
+        - crud/src/delete.ts
+
 
   UserTable:
     Type: AWS::DynamoDB::Table
