@@ -21,6 +21,16 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
+  apps/auth:
+    dependencies:
+      aws-lambda:
+        specifier: ^1.0.7
+        version: 1.0.7
+    devDependencies:
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
+
   apps/crud:
     dependencies:
       '@nv-sam/dynamodb':

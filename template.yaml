@@ -24,7 +24,7 @@ Parameters:
 
   UserTableName:
     Type: String
-    Default: users
+    Default: nv_users
     Description: User Table Name 
 
 Resources:
@@ -32,6 +32,27 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Ref Stage
+      Auth:
+        DefaultAuthorizer: IAMAuthorizer
+        Authorizers:
+          IAMAuthorizer:
+            FunctionArn: !GetAtt IAMFunction.Arn
+
+  
+  IAMFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: iam.handler
+
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: false
+        EntryPoints: 
+        - ./auth/src/iam.ts
+      
      
   MyFunction:
     Type: AWS::Serverless::Function
