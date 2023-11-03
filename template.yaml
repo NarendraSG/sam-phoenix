@@ -28,6 +28,9 @@ Parameters:
     Description: User Table Name 
 
 Resources:
+
+  # API with Authentication and APIs and finctions implemented
+
   RestApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -38,7 +41,6 @@ Resources:
           IAMAuthorizer:
             FunctionArn: !GetAtt IAMFunction.Arn
 
-  
   IAMFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -52,8 +54,7 @@ Resources:
         Sourcemap: false
         EntryPoints: 
         - ./auth/src/iam.ts
-      
-     
+          
   MyFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -172,6 +173,69 @@ Resources:
         - crud/src/delete.ts
 
 
+  # Lambda inserting message into Queue and another lambda pulling message from it and processing
+
+  FirstQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: my-first-queue
+      VisibilityTimeout: 30
+
+  QueueMsgProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: msgProcessor.handler
+      Policies: 
+        - SQSPollerPolicy:
+            QueueName: 
+              !GetAtt FirstQueue.QueueName
+      Events:
+        MsgProcessor:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt FirstQueue.Arn
+            Enabled: true
+            BatchSize: 5
+    
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: false
+        EntryPoints: 
+        - api/src/msgProcessor.ts
+  
+  QueueMsgInjectorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: msgInjector.handler
+      Environment:
+        Variables:
+          QUEUE_URL: !GetAtt FirstQueue.QueueUrl
+      Policies: 
+        - SQSSendMessagePolicy:
+            QueueName: 
+              !GetAtt FirstQueue.QueueName
+      
+      Events:
+        MsgInjector:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RestApi
+            Path: /inject
+            Method: get
+    
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: "es2020"
+        Sourcemap: false
+        EntryPoints: 
+        - api/src/msgInjector.ts
+        
+    
   UserTable:
     Type: AWS::DynamoDB::Table
     Properties:

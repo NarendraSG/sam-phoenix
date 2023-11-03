@@ -13,7 +13,9 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.441.0",
     "@nv-sam/lib": "workspace:1.0.0",
+    "@types/node": "^20.8.10",
     "aws-lambda": "^1.0.7"
   }
 }
