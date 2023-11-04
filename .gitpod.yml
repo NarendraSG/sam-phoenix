@@ -5,6 +5,6 @@
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
 
 tasks:
-  - init: brew install aws-sam-cli && pnpm install
+  - init: brew install aws-sam-cli
 
 

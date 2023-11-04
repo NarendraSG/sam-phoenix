@@ -1,0 +1,19 @@
+@startuml Hello API
+
+actor EndUser
+control Gateway
+
+EndUser -> Gateway: API request
+
+Gateway -> Auth: Check for Authentication
+Auth -> Gateway: After Check for Authentication
+
+alt Authenticated
+Gateway -> Lambda: Process
+Lambda -> Lambda: Processing
+Lambda --> Gateway: Return data
+Gateway --> EndUser: <font color=green><b>Response</b></font>
+else Not Authenticated
+Gateway --> EndUser: <font color=red><b>UnAuthenticated</b></font>
+end
+@enduml

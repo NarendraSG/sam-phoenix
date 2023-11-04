@@ -27,10 +27,12 @@ Parameters:
     Default: nv_users
     Description: User Table Name 
 
+
 Resources:
 
   # API with Authentication and APIs and finctions implemented
 
+  # Rest API
   RestApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -41,6 +43,7 @@ Resources:
           IAMAuthorizer:
             FunctionArn: !GetAtt IAMFunction.Arn
 
+  # Auth function
   IAMFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -54,7 +57,8 @@ Resources:
         Sourcemap: false
         EntryPoints: 
         - ./auth/src/iam.ts
-          
+
+   # Paths and Verbs       
   MyFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -175,20 +179,21 @@ Resources:
 
   # Lambda inserting message into Queue and another lambda pulling message from it and processing
 
+  ## Queue
   FirstQueue:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: my-first-queue
       VisibilityTimeout: 30
 
+  ## Lambda fucntio that polls message from the queue [FirstQueue] and processes
   QueueMsgProcessorFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: msgProcessor.handler
       Policies: 
         - SQSPollerPolicy:
-            QueueName: 
-              !GetAtt FirstQueue.QueueName
+            QueueName: !GetAtt FirstQueue.QueueName
       Events:
         MsgProcessor:
           Type: SQS
@@ -206,6 +211,7 @@ Resources:
         EntryPoints: 
         - api/src/msgProcessor.ts
   
+  ## Message injector to the Queue [FirstQueue]
   QueueMsgInjectorFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -215,8 +221,7 @@ Resources:
           QUEUE_URL: !GetAtt FirstQueue.QueueUrl
       Policies: 
         - SQSSendMessagePolicy:
-            QueueName: 
-              !GetAtt FirstQueue.QueueName
+            QueueName: !GetAtt FirstQueue.QueueName
       
       Events:
         MsgInjector:

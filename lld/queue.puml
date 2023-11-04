@@ -1,0 +1,19 @@
+@startuml API-Lambda-Queue
+
+actor User
+
+User -> MsgInjectorFunction: API request to push an item in a queue
+
+queue FirstQueue
+
+MsgInjectorFunction -> FirstQueue: Pushes an item to the Queue
+
+MsgInjectorFunction --> User: 200 OK
+
+FirstQueue -> MsgProcessorFunction: Lambda pulls message from Queue to process it
+
+MsgProcessorFunction -> MsgProcessorFunction: Processing
+
+MsgProcessorFunction -> FirstQueue: Acknowledge
+
+@enduml
